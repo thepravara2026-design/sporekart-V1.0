@@ -21,6 +21,7 @@ com\sporekart\shipping\internal\provider\ShipmentProvider$TrackingDetails.class
 com\sporekart\iam\internal\controller\AuthController$SendOtpRequest.class
 com\sporekart\training\internal\controller\TrainingController$EnrollmentResponseDto.class
 com\sporekart\shipping\internal\provider\ShiprocketShipmentProvider.class
+com\sporekart\shared\security\SecurityConfig.class
 com\sporekart\training\internal\controller\TrainingController.class
 com\sporekart\shared\dto\ProblemDetailsResponse$FieldErrorDetail.class
 com\sporekart\payment\internal\provider\PaymentProvider$PaymentOrderRequest.class
