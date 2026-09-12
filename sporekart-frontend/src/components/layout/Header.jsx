@@ -14,7 +14,7 @@ export default function Header({
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#DDE2DC] shadow-xs">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#DDE2DC] shadow-sm">
       {/* Top Announcement Bar */}
       <div className="bg-[#234D3C] text-white text-xs py-1.5 px-4 text-center font-medium">
         🌱 Free Shipping across India on orders over ₹1,999 | Certified Sterile Mycelium Spores
@@ -23,7 +23,7 @@ export default function Header({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-18 flex items-center justify-between gap-4">
         {/* Brand Logo */}
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => onTabChange('catalog')}>
-          <div className="w-10 h-10 rounded-md bg-[#234D3C] flex items-center justify-center text-white shadow-xs">
+          <div className="w-10 h-10 rounded-md bg-[#234D3C] flex items-center justify-center text-white shadow-sm">
             <Sprout className="w-6 h-6 text-[#C89B3C]" />
           </div>
           <div>
@@ -113,7 +113,7 @@ export default function Header({
           ) : (
             <button
               onClick={onOpenAuthModal}
-              className="hidden sm:inline-flex text-xs font-semibold bg-[#234D3C] text-white px-3.5 py-2.5 rounded-md hover:bg-[#1B3D30] transition shadow-xs"
+              className="hidden sm:inline-flex text-xs font-semibold bg-[#234D3C] text-white px-3.5 py-2.5 rounded-md hover:bg-[#1B3D30] transition shadow-sm"
             >
               Sign In
             </button>

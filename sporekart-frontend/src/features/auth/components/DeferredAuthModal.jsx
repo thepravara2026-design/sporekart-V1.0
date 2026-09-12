@@ -123,21 +123,21 @@ export default function DeferredAuthModal({
               <button
                 type="button"
                 onClick={() => setAuthMethod('PHONE')}
-                className={`py-1.5 rounded-sm text-xs font-semibold transition ${authMethod === 'PHONE' ? 'bg-white text-[#234D3C] shadow-xs' : 'text-[#536057]'}`}
+                className={`py-1.5 rounded-sm text-xs font-semibold transition ${authMethod === 'PHONE' ? 'bg-white text-[#234D3C] shadow-sm' : 'text-[#536057]'}`}
               >
                 Phone OTP
               </button>
               <button
                 type="button"
                 onClick={() => setAuthMethod('EMAIL')}
-                className={`py-1.5 rounded-sm text-xs font-semibold transition ${authMethod === 'EMAIL' ? 'bg-white text-[#234D3C] shadow-xs' : 'text-[#536057]'}`}
+                className={`py-1.5 rounded-sm text-xs font-semibold transition ${authMethod === 'EMAIL' ? 'bg-white text-[#234D3C] shadow-sm' : 'text-[#536057]'}`}
               >
                 Email OTP
               </button>
               <button
                 type="button"
                 onClick={() => setAuthMethod('GOOGLE')}
-                className={`py-1.5 rounded-sm text-xs font-semibold transition ${authMethod === 'GOOGLE' ? 'bg-white text-[#234D3C] shadow-xs' : 'text-[#536057]'}`}
+                className={`py-1.5 rounded-sm text-xs font-semibold transition ${authMethod === 'GOOGLE' ? 'bg-white text-[#234D3C] shadow-sm' : 'text-[#536057]'}`}
               >
                 Google OAuth
               </button>
