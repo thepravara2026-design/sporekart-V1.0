@@ -1,93 +1,74 @@
 # SporeKart System Architecture & Technical Design Specification
 
 > **Author**: FAANG Principal Systems Architect  
-> **Status**: APPROVED / ARCHITECTURE SPECIFICATION v2.0  
+> **Status**: APPROVED / ARCHITECTURE SPECIFICATION v2.1  
 > **Target Platform**: SporeKart E-Commerce & Training Platform  
 > **Stack**: Java 21 (Spring Boot 3.x Modular Monolith), React + Vite + Tailwind CSS, H2 (Dev) / PostgreSQL (Prod), Passwordless JWT Security (Google OAuth2, Phone/Email OTP), Razorpay, Shiprocket / Universal Logistics Adapter  
 
 ---
 
-## 1. Executive Summary & Core Architectural Enhancements (v2.0)
+## 1. Executive Summary & Landing Page Enhancements (v2.1)
 
-SporeKart v2.0 expands the platform from pure e-commerce to a dual-engine ecosystem combining **Product E-Commerce** and **Mushroom Cultivation & Biotech Training Modules**.
-
-### Key Architectural Evolution in v2.0
-1. **Passwordless Authentication Engine**: Complete elimination of legacy password logins. Authentication strictly enforces **Google OAuth 2.0**, **Phone SMS OTP**, or **Email Magic Code/OTP**.
-2. **Deferred Authentication (Guest-First Access)**: Buyers and Trainees experience zero login walls while browsing catalog items or viewing training courses. Authentication is triggered strictly at transactional conversion boundaries (**Checkout** for Buyers, **Batch Enrollment** for Trainees).
-3. **Role & Permission Governance**:
-   - **`ADMIN`**: Absolute system control (Catalog management, Training batch creation, Certificate issuance, Shipping control, System analytics).
-   - **`BUYER`**: Product consumer profile.
-   - **`TRAINEE`**: Training batch participant profile.
-4. **Immutable Identity Standard**: Core identity attributes (`firstName`, `lastName`, `email`, `phoneNumber`) are **strictly immutable** once captured at registration/first login.
-5. **Self-Service Account Deletion**: Users possess direct, unmediated control over account deletion under Settings. Admins have **zero override control** to delete or prevent self-deletion of user accounts.
-6. **Training Engine & PDF Certificate Management**: Dynamic lifecycle management for training batches (`FEATURED`, `ACTIVE`, `COMPLETED`) with PDF certificate generation and storage.
+SporeKart v2.1 unifies the complete platform into an **SEO-optimized, conversion-first unified landing page ecosystem** featuring:
+1. **Unified Landing Page Architecture**: Integrated Header Navigation, Hero Section, Catalog Grid, Cultivation Training Batches, About SporeKart, Verified Grower Reviews, Accordion FAQs, Contact Section, and Footer.
+2. **SEO & AEO Optimization (Schema.org Integration)**: Rich JSON-LD Structured Data (`schema.org/Store`, `schema.org/Product`, `schema.org/Course`, `schema.org/FAQPage`), OpenGraph social tags, and WCAG 2.2 AA compliant semantic HTML5 hierarchy.
+3. **Database Schema Additions**: `reviews` and `faqs` entities added to Flyway migration pipeline `V2__add_reviews_faqs_landing_schema.sql`.
 
 ---
 
-## 2. High-Level System Architecture
+## 2. Updated Entity-Relationship Diagram (ERD v2.1)
 
 ```mermaid
-graph TD
-    subgraph Client Layer [Frontend - React + Vite + Tailwind]
-        GuestUser["Guest Visitor (Unauthenticated)"]
-        BuyerUser["Authenticated Buyer"]
-        TraineeUser["Authenticated Trainee"]
-        AdminUser["Platform Admin"]
-    end
+erDiagram
+    USERS ||--o{ ORDERS : places
+    PRODUCTS ||--o{ REVIEWS : has
+    TRAINING_COURSES ||--o{ REVIEWS : has
+    CATEGORIES ||--o{ PRODUCTS : contains
+    ORDERS ||--o1 PAYMENTS : paid_via
+    ORDERS ||--o1 SHIPMENTS : shipped_via
 
-    subgraph API Security & Gateway Boundary
-        SpringSecurity["Spring Security Filter Chain"]
-        JWTFilter["Stateless JWT Authentication Filter"]
-        PasslessAuth["Passwordless Auth Engine (OAuth2 / OTP)"]
-    end
+    REVIEWS {
+        bigint id PK
+        bigint product_id FK
+        bigint course_id FK
+        string reviewer_name
+        string reviewer_location
+        integer rating
+        string title
+        text comment
+        boolean is_verified_grower
+    }
 
-    subgraph Modular Monolith Engine [Java 21 - Spring Boot 3.x]
-        direction TB
-        
-        subgraph Core Domain Modules
-            IAMModule["IAM Module<br/>(OAuth2, OTP, Immutability Guards, Self-Delete)"]
-            CatalogModule["Catalog Module<br/>(Products, Stock, Variants)"]
-            CartOrderModule["Cart & Order Module<br/>(Cart Sync, Guest Checkout)"]
-            TrainingModule["Training Module<br/>(Batches, Enrollments, PDF Certificates)"]
-            PaymentModule["Payment Engine<br/>(Razorpay Adapter)"]
-            ShippingModule["Shipping Engine<br/>(Shiprocket Adapter)"]
-            NotificationModule["Notification Engine<br/>(SMS OTP, Email OTP, Webhooks)"]
-        end
-        
-        EventBus["Spring Event Bus / ApplicationEventPublisher"]
-    end
+    FAQS {
+        bigint id PK
+        string category
+        string question
+        text answer
+        integer display_order
+        boolean is_active
+    }
+```
 
-    subgraph External Identity & Gateway Integrations
-        GoogleOAuth["Google OAuth 2.0 API"]
-        TwilioSMS["SMS Gateway (OTP Provider)"]
-        RazorpayAPI["Razorpay Payment Gateway"]
-        ShiprocketAPI["Shiprocket Logistics API"]
-    end
+---
 
-    subgraph Storage & Media Engine
-        DB[(H2 Dev / PostgreSQL Prod)]
-        MediaStore[(Certificate PDF & Assets Store)]
-    end
+## 3. SEO & Structured Data Architecture
 
-    GuestUser -->|Browse Products & Courses| SpringSecurity
-    BuyerUser -->|Checkout Product| PasslessAuth
-    TraineeUser -->|Enroll in Batch| PasslessAuth
-    AdminUser -->|Manage Platform| SpringSecurity
+### JSON-LD Schema.org Injection Engine
+The frontend injects structured metadata into the document head to guarantee search engine indexability and AI Answer Engine Optimization (AEO):
 
-    SpringSecurity --> JWTFilter
-    PasslessAuth --> GoogleOAuth
-    PasslessAuth --> TwilioSMS
-    PasslessAuth --> IAMModule
-
-    CartOrderModule -->|Validate Stock| CatalogModule
-    CartOrderModule -->|Execute Payment| PaymentModule
-    TrainingModule -->|Enrollment Payment| PaymentModule
-    TrainingModule -->|Issue Certificate| MediaStore
-    
-    CartOrderModule -.->|Publish: OrderPlacedEvent| EventBus
-    TrainingModule -.->|Publish: TraineeEnrolledEvent| EventBus
-    EventBus -.->|Async SMS/Email| NotificationModule
-    EventBus -.->|Trigger Fulfillment| ShippingModule
-
-    IAMModule & CatalogModule & CartOrderModule & TrainingModule & PaymentModule & ShippingModule --> DB
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "SporeKart",
+  "image": "https://sporekart.com/assets/logo.svg",
+  "description": "India's premier certified mushroom cultivation, spawn supply, and biotech training platform.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Industrial Estate",
+    "addressLocality": "Bengaluru",
+    "addressRegion": "Karnataka",
+    "country": "IN"
+  }
+}
 ```

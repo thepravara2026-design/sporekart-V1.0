@@ -5,6 +5,10 @@ import ProductCard from './features/catalog/components/ProductCard';
 import TrainingCard from './features/training/components/TrainingCard';
 import CartDrawer from './features/cart/components/CartDrawer';
 import DeferredAuthModal from './features/auth/components/DeferredAuthModal';
+import AboutSection from './components/landing/AboutSection';
+import ReviewsSection from './components/landing/ReviewsSection';
+import FaqSection from './components/landing/FaqSection';
+import ContactSection from './components/landing/ContactSection';
 import Button from './components/ui/Button';
 import Badge from './components/ui/Badge';
 
@@ -19,7 +23,7 @@ export default function App() {
   const [authTriggerSource, setAuthTriggerSource] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
 
-  // Product Catalog
+  // Product Catalog Data
   const products = [
     {
       id: 1,
@@ -139,7 +143,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-[#17231D]">
-      {/* Header Layout Component */}
+      {/* 1. NAVBAR COMPONENT (Section 16 Design System) */}
       <Header
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -150,9 +154,9 @@ export default function App() {
         onToggleCart={() => setIsCartOpen(!isCartOpen)}
       />
 
-      {/* Main Body Content */}
+      {/* Main Body Layout */}
       <main className="flex-1">
-        {/* HERO SECTION (Section 17 Design System) */}
+        {/* 2. HERO SECTION (Section 17 Design System) */}
         {activeTab === 'catalog' && (
           <section className="bg-gradient-to-b from-[#F6F1E7] to-[#FAFAF7] border-b border-[#DDE2DC] py-16 px-4 sm:px-6">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -168,7 +172,10 @@ export default function App() {
                   Certified sterile mycelium liquid cultures, autoclaved grain spawn, growing kits, and expert cultivation training for Indian growers.
                 </p>
                 <div className="flex flex-wrap gap-3 pt-2">
-                  <Button variant="primary" size="lg" icon={ArrowRight} onClick={() => setActiveTab('catalog')}>
+                  <Button variant="primary" size="lg" icon={ArrowRight} onClick={() => {
+                    const el = document.getElementById('catalog-grid');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}>
                     Shop Products
                   </Button>
                   <Button variant="secondary" size="lg" icon={Sprout} onClick={() => setActiveTab('training')}>
@@ -181,7 +188,7 @@ export default function App() {
               <div className="relative rounded-2xl overflow-hidden shadow-md border border-[#DDE2DC]">
                 <img
                   src="https://images.unsplash.com/photo-1543362906-acfc16c67564?auto=format&fit=crop&w=800&q=80"
-                  alt="Mushroom Cultivation"
+                  alt="Mushroom Cultivation Spores"
                   className="w-full h-80 sm:h-96 object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111713]/80 via-transparent to-transparent flex items-end p-6">
@@ -217,10 +224,9 @@ export default function App() {
           </div>
         </section>
 
-        {/* CATALOG CONTENT */}
+        {/* 3. CATALOG & ALL PRODUCT LISTS */}
         {activeTab === 'catalog' && (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-            {/* Section Header */}
+          <section id="catalog-grid" className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
               <div>
                 <span className="text-xs font-bold tracking-wider text-[#7A8F5A] uppercase block">Product Catalog</span>
@@ -245,7 +251,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Product Grid (4 columns desktop, 2 columns mobile Section 42) */}
+            {/* Product Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {filteredProducts.map((p) => (
                 <ProductCard
@@ -259,9 +265,9 @@ export default function App() {
           </section>
         )}
 
-        {/* TRAINING CONTENT */}
-        {activeTab === 'training' && (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+        {/* 4. TRAINING SECTION */}
+        {(activeTab === 'catalog' || activeTab === 'training') && (
+          <section id="training-section" className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
             <div className="mb-8">
               <span className="text-xs font-bold tracking-wider text-[#7A8F5A] uppercase block">Practical Workshops</span>
               <h2 className="font-serif text-3xl font-bold text-[#17231D] mt-1">Cultivation & Biotech Training Batches</h2>
@@ -276,7 +282,19 @@ export default function App() {
           </section>
         )}
 
-        {/* USER PROFILE CONTENT */}
+        {/* 5. ABOUT SPOREKART */}
+        {activeTab === 'catalog' && <AboutSection />}
+
+        {/* 6. VERIFIED GROWER REVIEWS */}
+        {activeTab === 'catalog' && <ReviewsSection />}
+
+        {/* 7. ACCORDION FAQ SECTION */}
+        {activeTab === 'catalog' && <FaqSection />}
+
+        {/* 8. CONTACT SECTION */}
+        {activeTab === 'catalog' && <ContactSection />}
+
+        {/* USER PROFILE TAB CONTENT */}
         {activeTab === 'profile' && user && (
           <section className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
             <div>
@@ -284,7 +302,6 @@ export default function App() {
               <h2 className="font-serif text-3xl font-bold text-[#17231D] mt-1">User Profile & Settings</h2>
             </div>
 
-            {/* Immutable Identity Card */}
             <div className="card-base p-6 border-[#234D3C]/30 bg-white">
               <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-[#DDE2DC]">
                 <div className="flex items-center gap-2">
@@ -316,7 +333,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Certificate Card */}
             <div className="card-base p-6 bg-white">
               <h3 className="font-bold text-lg text-[#17231D] mb-4 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-[#234D3C]" /> Training History & Certificates
@@ -337,7 +353,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Self-Service Account Deletion */}
             <div className="card-base p-6 border-[#C44747]/30 bg-[#FCEBEC]/30">
               <h3 className="font-bold text-lg text-[#C44747] mb-1 flex items-center gap-2">
                 <Trash2 className="w-5 h-5" /> Delete Account (Self-Service)
@@ -363,7 +378,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer Layout Component */}
+      {/* 9. FOOTER COMPONENT (Section 44 Design System) */}
       <Footer />
 
       {/* Slide-over Cart Drawer */}
