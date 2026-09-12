@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: sporekart-backend
+  profiles:
+    active: dev
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+sporekart:
+  jwt:
+    secret: 9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b
+    access-token-expiration-ms: 900000       # 15 minutes
+    refresh-token-expiration-ms: 604800000   # 7 days
+  payment:
+    razorpay:
+      key-id: rzp_test_sporekart_dev_key
+      key-secret: sporekart_dev_razorpay_secret
+  shipping:
+    shiprocket:
+      email: dev@sporekart.com
+      password: dev_shiprocket_password
+  storage:
+    certificates-dir: ./data/certificates/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
