@@ -1,0 +1,5 @@
+# Created at 2026-09-12T06:31:29.587
+Boot Manifest-JAR contains absolute paths in classpath 'F:\sporekart\sporekart-V1.0\sporekart-backend\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+

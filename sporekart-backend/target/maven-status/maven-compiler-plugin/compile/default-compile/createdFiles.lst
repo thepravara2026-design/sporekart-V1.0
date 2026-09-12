@@ -6,6 +6,7 @@ com\sporekart\shared\dto\ApiResponse$ApiError.class
 com\sporekart\payment\internal\controller\PaymentController.class
 com\sporekart\shared\security\RestAccessDeniedHandler.class
 com\sporekart\catalog\internal\controller\FaqController.class
+com\sporekart\shared\package-info.class
 com\sporekart\shared\exception\BaseException.class
 com\sporekart\shipping\internal\provider\ShipmentProvider$ShipmentOrderResponse.class
 com\sporekart\shared\exception\ErrorCode.class
