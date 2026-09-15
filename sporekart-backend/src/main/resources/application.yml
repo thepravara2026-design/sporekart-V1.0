@@ -27,6 +27,11 @@ sporekart:
       password: dev_shiprocket_password
   storage:
     certificates-dir: ./data/certificates/
+  supabase:
+    url: ${SUPABASE_URL:https://demo.supabase.co}
+    key: ${SUPABASE_KEY:demo_supabase_api_key_sporekart_2026}
+    bucket: ${SUPABASE_BUCKET:sporekart-media}
+    enabled: true
 
 management:
   endpoints:

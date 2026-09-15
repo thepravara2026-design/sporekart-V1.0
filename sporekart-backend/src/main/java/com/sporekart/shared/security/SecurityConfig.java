@@ -44,6 +44,8 @@ public class SecurityConfig {
                     "/api/v1/reviews/**",
                     "/api/v1/faqs/**",
                     "/api/v1/catalog/**",
+                    "/api/v1/education/**",
+                    "/api/v1/media/**",
                     "/api/v1/training/**",
                     "/actuator/**",
                     "/h2-console/**",

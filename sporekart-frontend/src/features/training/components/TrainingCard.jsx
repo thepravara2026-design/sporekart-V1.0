@@ -1,79 +1,93 @@
 import React from 'react';
 import Badge from '../../../components/ui/Badge';
 import Button from '../../../components/ui/Button';
-import { Calendar, Clock, MapPin, Users, Award } from 'lucide-react';
+import { Award, CheckCircle2, Clock, Calendar, MapPin } from 'lucide-react';
 
-export default function TrainingCard({ batch, onRegister }) {
-  const { title, status, startDate, duration, mode, seatsRemaining, fee, level } = batch;
+export default function TrainingCard({ batch = {}, onRegister }) {
+  const title = batch.title || batch.batchName || 'Mushroom Cultivation Workshop';
+  const status = batch.status || batch.batchStatus || 'ACTIVE';
+  const startDate = batch.startDate || '2026-10-01';
+  const duration = batch.duration || '2 Days';
+  const mode = batch.mode || 'Lab & Farm';
+  const fee = batch.fee ?? batch.courseFee ?? 3499;
+  const level = batch.level || 'All Levels';
 
-  const statusVariantMap = {
-    FEATURED: 'brand',
-    ACTIVE: 'success',
-    COMPLETED: 'neutral',
-  };
+  const highlights = [
+    'Growing basics & sterile environment',
+    'Spawn handling & liquid culture inoculation',
+    'Farm setup & temperature/humidity control',
+    'Harvesting flushes & post-harvest care',
+    'Market basics & commercial sales guidance',
+  ];
 
   return (
-    <div className="card-base bg-white p-6 border-[#DDE2DC] hover:border-[#234D3C]/40 transition flex flex-col justify-between">
+    <div className="card-base bg-white p-6 border-[#E1E5DA] hover:border-[#1F4D35] flex flex-col justify-between h-full">
       <div>
-        {/* Header badges */}
+        {/* Header Badge */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <Badge variant={statusVariantMap[status] || 'info'}>
-            {status} BATCH
+          <Badge variant={status === 'FEATURED' ? 'gold' : status === 'ACTIVE' ? 'success' : 'warning'}>
+            TRAINING • {status}
           </Badge>
-          <span className="text-xs font-medium text-[#536057]">
-            {level || 'Beginner to Intermediate'}
+          <span className="text-[12px] font-semibold text-[#59645B]">
+            {level}
           </span>
         </div>
 
         {/* Title */}
-        <h3 className="font-bold text-xl text-[#17231D] mb-4">
+        <h3 className="font-bold text-[20px] text-[#172019] mb-3 leading-snug">
           {title}
         </h3>
 
-        {/* Metadata Grid */}
-        <div className="grid grid-cols-2 gap-3 text-xs text-[#536057] mb-6 bg-[#F4F4EF] p-3.5 rounded-md border border-[#DDE2DC]">
+        {/* Metadata Strip */}
+        <div className="flex flex-wrap items-center gap-4 text-[13px] text-[#59645B] mb-5 bg-[#FCFCF8] p-3 rounded-[12px] border border-[#E1E5DA]">
           <div className="flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-[#234D3C]" />
-            <span>Duration: <strong>{duration || '2 Days'}</strong></span>
+            <Clock className="w-4 h-4 text-[#1F4D35]" />
+            <span>{duration}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-[#234D3C]" />
-            <span>Mode: <strong>{mode || 'Practical Workshop'}</strong></span>
+            <MapPin className="w-4 h-4 text-[#1F4D35]" />
+            <span>{mode}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-[#234D3C]" />
-            <span>Start: <strong>{startDate}</strong></span>
+            <Calendar className="w-4 h-4 text-[#1F4D35]" />
+            <span>{startDate}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-[#234D3C]" />
-            <span>Seats: <strong>{seatsRemaining || '12 remaining'}</strong></span>
-          </div>
+        </div>
+
+        {/* Practical Learning Outcomes */}
+        <div className="space-y-2 mb-6">
+          <span className="text-[12px] font-bold text-[#172019] uppercase tracking-wider block">
+            What You Will Learn:
+          </span>
+          <ul className="space-y-1.5">
+            {highlights.map((item, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-[13px] text-[#59645B]">
+                <CheckCircle2 className="w-4 h-4 text-[#1F4D35] shrink-0 mt-0.5" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      {/* Footer Area */}
-      <div className="pt-4 border-t border-[#DDE2DC] flex items-center justify-between gap-4">
+      {/* Footer Price & Action */}
+      <div className="pt-4 border-t border-[#E1E5DA] flex items-center justify-between gap-4">
         <div>
-          <span className="text-xs text-[#7A847D] block">Course Fee</span>
-          <span className="text-2xl font-bold text-[#17231D]">
-            ₹{fee.toLocaleString('en-IN')}
+          <span className="text-[12px] text-[#7C857D] block">Course Fee</span>
+          <span className="text-[22px] font-bold text-[#172019]">
+            ₹{Number(fee || 0).toLocaleString('en-IN')}
           </span>
         </div>
 
-        {status !== 'COMPLETED' ? (
-          <Button
-            variant="primary"
-            size="md"
-            icon={Award}
-            onClick={() => onRegister(batch)}
-          >
-            Register Now
-          </Button>
-        ) : (
-          <Button variant="ghost" size="md" isDisabled>
-            Batch Completed
-          </Button>
-        )}
+        <Button
+          variant={status === 'COMPLETED' ? 'ghost' : 'primary'}
+          size="md"
+          icon={Award}
+          isDisabled={status === 'COMPLETED'}
+          onClick={() => onRegister && onRegister(batch)}
+        >
+          {status === 'COMPLETED' ? 'Completed' : 'View Training'}
+        </Button>
       </div>
     </div>
   );

@@ -3,24 +3,64 @@
 @tailwind utilities;
 
 :root {
-  --brand-primary: #234D3C;
-  --brand-primary-hover: #1B3D30;
-  --brand-secondary: #7A8F5A;
-  --brand-earth: #8A6246;
-  --brand-gold: #C89B3C;
-  --brand-cream: #F6F1E7;
-  --bg-page: #FAFAF7;
-  --bg-surface: #FFFFFF;
-  --text-primary: #17231D;
-  --text-secondary: #536057;
-  --border-default: #DDE2DC;
+  /* ---------------- COLORS ---------------- */
+  --forest: #173B2A;
+  --green-800: #1F4D35;
+  --green-700: #2F6B45;
+  --green-600: #3F7D4D;
+  --green-500: #5A9360;
+
+  --moss: #607D52;
+  --leaf: #7FA66A;
+  --sage: #B8C9A8;
+  --cream: #F6F2E8;
+  --soil: #5C4635;
+
+  --gold: #C79A4A;
+  --gold-soft: #E6C98D;
+
+  --white: #FFFFFF;
+  --surface: #FCFCF8;
+  --surface-soft: #F3F4ED;
+  --border: #E1E5DA;
+
+  --text-primary: #172019;
+  --text-secondary: #59645B;
+  --text-muted: #7C857D;
+
+  /* ---------------- RADIUS ---------------- */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* ---------------- SHADOW ---------------- */
+  --shadow-xs: 0 1px 3px rgba(23,32,25,.06);
+  --shadow-sm: 0 4px 12px rgba(23,32,25,.08);
+  --shadow-md: 0 10px 30px rgba(23,32,25,.10);
+  --shadow-lg: 0 20px 50px rgba(23,32,25,.14);
+
+  /* ---------------- MOTION ---------------- */
+  --motion-fast: 150ms;
+  --motion-normal: 220ms;
+  --motion-slow: 400ms;
+  --ease-organic: cubic-bezier(.22,1,.36,1);
+
+  /* ---------------- LAYOUT ---------------- */
+  --container-max: 1280px;
+  --container-padding-desktop: 32px;
+  --container-padding-tablet: 24px;
+  --container-padding-mobile: 16px;
 }
 
 @layer base {
   body {
-    background-color: var(--bg-page);
+    background-color: var(--surface);
     color: var(--text-primary);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, .font-serif {
@@ -28,44 +68,50 @@
   }
 }
 
-/* Custom Component Classes following SporeKart Design System */
+/* ---------------- BUTTON SYSTEM ---------------- */
 .btn-primary {
-  @apply bg-[#234D3C] hover:bg-[#1B3D30] active:bg-[#153127] text-white font-semibold text-sm px-5 py-3 rounded-md transition-all duration-150 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#234D3C]/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+  @apply bg-[#1F4D35] hover:bg-[#173B2A] active:bg-[#153127] text-white font-semibold rounded-[10px] px-5 py-3 transition-all duration-200 shadow-xs hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[#1F4D35]/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
 }
 
 .btn-secondary {
-  @apply bg-transparent border border-[#234D3C] text-[#234D3C] hover:bg-[#234D3C]/5 font-semibold text-sm px-5 py-3 rounded-md transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[#234D3C]/20 disabled:opacity-50 flex items-center justify-center gap-2;
+  @apply bg-transparent border border-[#1F4D35] text-[#1F4D35] hover:bg-[#1F4D35]/10 font-semibold rounded-[10px] px-5 py-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1F4D35]/20 disabled:opacity-50 flex items-center justify-center gap-2;
 }
 
-.btn-ghost {
-  @apply bg-transparent text-[#536057] hover:text-[#17231D] hover:bg-[#F4F4EF] font-medium text-sm px-4 py-2.5 rounded-sm transition-all duration-150 flex items-center justify-center gap-2;
+.btn-light {
+  @apply bg-[#F6F2E8] text-[#173B2A] hover:bg-[#EBDCC5] font-semibold rounded-[10px] px-5 py-3 transition-all duration-200 flex items-center justify-center gap-2;
+}
+
+.btn-text {
+  @apply bg-transparent text-[#1F4D35] hover:text-[#173B2A] font-semibold text-sm transition-colors duration-150 inline-flex items-center gap-1.5 p-0;
 }
 
 .btn-destructive {
-  @apply bg-[#C44747] hover:bg-[#A83B3B] text-white font-semibold text-sm px-5 py-3 rounded-md transition-all duration-150 focus:ring-2 focus:ring-[#C44747]/40 flex items-center justify-center gap-2;
+  @apply bg-[#C44747] hover:bg-[#A83B3B] text-white font-semibold rounded-[10px] px-5 py-3 transition-all duration-200 focus:ring-2 focus:ring-[#C44747]/40 flex items-center justify-center gap-2;
 }
 
+/* ---------------- CARD SYSTEM ---------------- */
 .card-base {
-  @apply bg-white border border-[#DDE2DC] rounded-lg shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden;
+  @apply bg-white border border-[#E1E5DA] rounded-[20px] shadow-xs hover:shadow-sm hover:border-[#B8C9A8] transition-all duration-200 overflow-hidden;
+}
+
+/* ---------------- BADGES ---------------- */
+.badge-gold {
+  @apply bg-[#F6F2E8] text-[#C79A4A] border border-[#C79A4A]/30 text-[12px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1;
 }
 
 .badge-success {
-  @apply bg-[#E8F4EC] text-[#2E7D50] border border-[#2E7D50]/20 text-xs font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1;
-}
-
-.badge-warning {
-  @apply bg-[#FFF4DD] text-[#B7791F] border border-[#B7791F]/20 text-xs font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1;
-}
-
-.badge-info {
-  @apply bg-[#EAF3F8] text-[#3C6E91] border border-[#3C6E91]/20 text-xs font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1;
+  @apply bg-[#E8F4EC] text-[#1F4D35] border border-[#1F4D35]/20 text-[12px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1;
 }
 
 .badge-brand {
-  @apply bg-[#F6F1E7] text-[#234D3C] border border-[#234D3C]/20 text-xs font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1;
+  @apply bg-[#F6F2E8] text-[#173B2A] border border-[#173B2A]/20 text-[12px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1;
 }
 
-/* Reduced Motion Support */
+.badge-warning {
+  @apply bg-[#FFF4DD] text-[#B7791F] border border-[#B7791F]/20 text-[12px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1;
+}
+
+/* ---------------- REDUCED MOTION ---------------- */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

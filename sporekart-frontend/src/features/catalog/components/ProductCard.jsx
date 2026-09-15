@@ -1,77 +1,110 @@
 import React from 'react';
 import Badge from '../../../components/ui/Badge';
 import Button from '../../../components/ui/Button';
-import { ShoppingCart, Star } from 'lucide-react';
+import { ShoppingCart, Star, Bell } from 'lucide-react';
 
-export default function ProductCard({ product, onAddToCart, onBuyNow }) {
-  const { title, category, price, mrp, rating, reviewsCount, imageUrl, inStock } = product;
+export default function ProductCard({ product = {}, onAddToCart, onBuyNow }) {
+  const title = product.title || 'Mushroom Product';
+  const category = product.category || 'Spores';
+  const price = product.price ?? 0;
+  const mrp = product.mrp;
+  const rating = product.rating ?? 4.8;
+  const reviewsCount = product.reviewsCount ?? 42;
+  const imageUrl = product.imageUrl || 'https://images.unsplash.com/photo-1543362906-acfc16c67564?auto=format&fit=crop&w=600&q=80';
+  const inStock = product.inStock !== false;
+  const badge = product.badge;
+  const benefit = product.benefit || 'Certified sterile culture with high colonization speed.';
 
-  const discountPercent = mrp ? Math.round(((mrp - price) / mrp) * 100) : 0;
+  const discountPercent = mrp && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
 
   return (
-    <article className="card-base group flex flex-col justify-between h-full bg-white hover:border-[#234D3C]/40">
-      {/* Product Image Area - 4:3 Aspect Ratio */}
-      <div className="relative aspect-[4/3] bg-[#F4F4EF] overflow-hidden">
+    <article className="card-base group flex flex-col justify-between h-full bg-white border-[#E1E5DA] hover:border-[#1F4D35] transition-all duration-200">
+      {/* Product Image Area */}
+      <div className="relative aspect-[4/3] bg-[#F3F4ED] overflow-hidden">
         <img
-          src={imageUrl || 'https://images.unsplash.com/photo-1543362906-acfc16c67564?auto=format&fit=crop&w=600&q=80'}
+          src={imageUrl}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
+
+        {/* Single Meaningful Badge */}
         <div className="absolute top-3 left-3 flex items-center gap-1.5">
-          <Badge variant="brand">{category}</Badge>
-          {discountPercent > 0 && (
-            <Badge variant="success">{discountPercent}% OFF</Badge>
+          {!inStock ? (
+            <Badge variant="warning">OUT OF STOCK</Badge>
+          ) : badge ? (
+            <Badge variant="gold">{badge}</Badge>
+          ) : discountPercent > 0 ? (
+            <Badge variant="success">SALE {discountPercent}% OFF</Badge>
+          ) : (
+            <Badge variant="brand">{category}</Badge>
           )}
         </div>
       </div>
 
-      {/* Card Content */}
+      {/* Card Body */}
       <div className="p-5 flex-1 flex flex-col justify-between">
         <div>
-          {/* Rating */}
-          <div className="flex items-center gap-1 text-xs text-[#536057] mb-1">
-            <Star className="w-3.5 h-3.5 fill-[#C89B3C] text-[#C89B3C]" />
-            <span className="font-semibold text-[#17231D]">{rating || '4.9'}</span>
-            <span>({reviewsCount || 42})</span>
-          </div>
-
-          {/* Product Title */}
-          <h3 className="font-bold text-base text-[#17231D] group-hover:text-[#234D3C] transition line-clamp-2">
+          {/* Title */}
+          <h3 className="font-bold text-[16px] text-[#172019] group-hover:text-[#1F4D35] transition-colors line-clamp-2 leading-snug">
             {title}
           </h3>
+
+          {/* Short Product Benefit */}
+          <p className="text-[13px] text-[#59645B] mt-1.5 line-clamp-2 leading-relaxed">
+            {benefit}
+          </p>
+
+          {/* Rating */}
+          <div className="flex items-center gap-1.5 text-[13px] text-[#59645B] mt-2.5">
+            <Star className="w-4 h-4 fill-[#C79A4A] text-[#C79A4A]" />
+            <span className="font-bold text-[#172019]">{rating}</span>
+            <span className="text-[#7C857D]">({reviewsCount})</span>
+          </div>
         </div>
 
-        {/* Price & Action Area */}
-        <div className="mt-4 pt-3 border-t border-[#DDE2DC]">
+        {/* Price & Primary Action */}
+        <div className="mt-4 pt-3 border-t border-[#E1E5DA]">
           <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-2xl font-bold text-[#17231D]">
-              ₹{price.toLocaleString('en-IN')}
+            <span className="text-[22px] font-bold text-[#172019]">
+              ₹{Number(price).toLocaleString('en-IN')}
             </span>
-            {mrp && (
-              <span className="text-sm text-[#7A847D] line-through">
-                ₹{mrp.toLocaleString('en-IN')}
+            {mrp && mrp > price && (
+              <span className="text-[14px] text-[#7C857D] line-through font-normal">
+                ₹{Number(mrp).toLocaleString('en-IN')}
               </span>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          {inStock ? (
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={ShoppingCart}
+                onClick={() => onAddToCart && onAddToCart(product)}
+              >
+                Add
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => onBuyNow && onBuyNow(product)}
+              >
+                Buy Now
+              </Button>
+            </div>
+          ) : (
             <Button
               variant="secondary"
               size="sm"
-              icon={ShoppingCart}
-              onClick={() => onAddToCart(product)}
+              icon={Bell}
+              onClick={() => alert(`We will notify you when ${title} is back in stock!`)}
+              className="w-full"
             >
-              Add
+              Notify Me
             </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => onBuyNow(product)}
-            >
-              Buy Now
-            </Button>
-          </div>
+          )}
         </div>
       </div>
     </article>

@@ -1,8 +1,14 @@
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\security\SecurityConfig.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\exception\GlobalExceptionHandler.java
+F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\media\internal\controller\MediaController.java
+F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\media\internal\model\MediaAsset.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\iam\internal\listener\ImmutableIdentityEntityListener.java
+F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\media\internal\repository\MediaAssetRepository.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shipping\internal\provider\ShipmentProvider.java
+F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\catalog\internal\controller\ProductController.java
+F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\catalog\internal\controller\CategoryController.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\exception\package-info.java
+F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\media\internal\service\MediaService.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\payment\internal\provider\PaymentProvider.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shipping\internal\controller\ShippingController.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\training\internal\controller\TrainingController.java
@@ -14,7 +20,9 @@ F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\paymen
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\exception\BaseException.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\dto\ApiResponse.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\exception\ImmutableAttributeViolationException.java
+F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\catalog\internal\controller\EducationController.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\payment\internal\provider\RazorpayPaymentProvider.java
+F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\media\internal\config\SupabaseStorageProperties.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\iam\internal\controller\AuthController.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\security\package-info.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\dto\ProblemDetailsResponse.java
@@ -23,6 +31,7 @@ F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shippi
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\dto\package-info.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\exception\ResourceNotFoundException.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\package-info.java
+F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\media\internal\service\SupabaseStorageService.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\shared\exception\ErrorCode.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\iam\internal\domain\UserEntity.java
 F:\sporekart\sporekart-V1.0\sporekart-backend\src\main\java\com\sporekart\catalog\internal\controller\FaqController.java
