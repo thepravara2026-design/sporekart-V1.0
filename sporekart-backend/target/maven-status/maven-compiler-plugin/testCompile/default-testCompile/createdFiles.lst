@@ -1,7 +1,9 @@
 com\sporekart\SporekartApplicationTest.class
 com\sporekart\iam\UserEntityTest.class
+com\sporekart\shared\GlobalExceptionHandlerTest.class
 com\sporekart\catalog\FaqControllerTest.class
 com\sporekart\training\TrainingControllerTest.class
 com\sporekart\catalog\ReviewControllerTest.class
 com\sporekart\iam\AuthControllerTest.class
 com\sporekart\ApplicationModulesTest.class
+com\sporekart\ArchitectureBoundaryTest.class

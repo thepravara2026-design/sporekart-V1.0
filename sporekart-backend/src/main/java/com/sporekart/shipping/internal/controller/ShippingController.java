@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/shipping")
+@RequestMapping("/api/v1/shipping")
 @RequiredArgsConstructor
 @Tag(name = "Logistics & Shipping Engine", description = "Universal Logistics Adapter & Shiprocket Control Engine")
 public class ShippingController {

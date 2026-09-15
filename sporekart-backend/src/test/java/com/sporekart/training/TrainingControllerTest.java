@@ -22,9 +22,9 @@ class TrainingControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("GET /training/batches should return list of training batches with HTTP 200 OK")
+    @DisplayName("GET /api/v1/training/batches should return list of training batches with HTTP 200 OK")
     void testGetBatches_ReturnsBatchesList() throws Exception {
-        mockMvc.perform(get("/training/batches")
+        mockMvc.perform(get("/api/v1/training/batches")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))

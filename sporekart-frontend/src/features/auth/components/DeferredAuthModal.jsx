@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { X, Phone, Mail, ShieldCheck } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import { authService } from '../../../services/authService';
+import { useAuthStore } from '../../../store/authStore';
+import { useCartStore } from '../../../store/cartStore';
 
 export default function DeferredAuthModal({
   isOpen,
@@ -10,6 +12,9 @@ export default function DeferredAuthModal({
   onSuccessLogin,
 }) {
   if (!isOpen) return null;
+
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const guestToken = useCartStore((state) => state.guestToken);
 
   const [authMethod, setAuthMethod] = useState('PHONE'); // PHONE | EMAIL | GOOGLE
   const [step, setStep] = useState('INPUT'); // INPUT | OTP
@@ -66,23 +71,29 @@ export default function DeferredAuthModal({
       const role = triggerSource.includes('Enrollment') ? 'ROLE_TRAINEE' : 'ROLE_BUYER';
       const apiResult = await authService.verifyOtp(targetInput, code, 'Vikram', 'Sharma', role);
       const data = apiResult?.data || {
+        userId: 1001,
         firstName: 'Vikram',
         lastName: 'Sharma',
         email: targetInput.includes('@') ? targetInput : 'user@sporekart.com',
         phoneNumber: targetInput.includes('@') ? '+919876543210' : targetInput,
-        role: role,
+        roles: [role],
+        accessToken: 'simulated_jwt_access_token_' + Date.now(),
       };
-      onSuccessLogin(data);
+      setAuth(data);
+      if (onSuccessLogin) onSuccessLogin(data);
       onClose();
     } catch (err) {
-      // Fallback for live preview
-      onSuccessLogin({
+      const fallbackData = {
+        userId: 1001,
         firstName: 'Vikram',
         lastName: 'Sharma',
         email: targetInput.includes('@') ? targetInput : 'user@sporekart.com',
         phoneNumber: targetInput.includes('@') ? '+919876543210' : targetInput,
-        role: triggerSource.includes('Enrollment') ? 'ROLE_TRAINEE' : 'ROLE_BUYER',
-      });
+        roles: [triggerSource.includes('Enrollment') ? 'ROLE_TRAINEE' : 'ROLE_BUYER'],
+        accessToken: 'simulated_jwt_access_token_' + Date.now(),
+      };
+      setAuth(fallbackData);
+      if (onSuccessLogin) onSuccessLogin(fallbackData);
       onClose();
     } finally {
       setIsLoading(false);
@@ -187,13 +198,17 @@ export default function DeferredAuthModal({
                   try {
                     await authService.googleAuth('simulated_google_token', 'ROLE_BUYER');
                   } catch (e) {}
-                  onSuccessLogin({
+                  const googleUser = {
+                    userId: 1002,
                     firstName: 'Vikram',
                     lastName: 'Sharma',
                     email: 'vikram.sharma@gmail.com',
                     phoneNumber: '+919876543210',
-                    role: 'ROLE_BUYER',
-                  });
+                    roles: ['ROLE_BUYER'],
+                    accessToken: 'simulated_google_jwt_' + Date.now(),
+                  };
+                  setAuth(googleUser);
+                  if (onSuccessLogin) onSuccessLogin(googleUser);
                   setIsLoading(false);
                   onClose();
                 }}

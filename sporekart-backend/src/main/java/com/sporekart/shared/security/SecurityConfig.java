@@ -1,5 +1,6 @@
 package com.sporekart.shared.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -17,15 +19,13 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
     private final RestAccessDeniedHandler accessDeniedHandler;
-
-    public SecurityConfig(RestAuthenticationEntryPoint authenticationEntryPoint, RestAccessDeniedHandler accessDeniedHandler) {
-        this.authenticationEntryPoint = authenticationEntryPoint;
-        this.accessDeniedHandler = accessDeniedHandler;
-    }
+    private final TraceIdFilter traceIdFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,23 +39,38 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler)
             )
             .authorizeHttpRequests(auth -> auth
+                // Public Reads (both legacy /path and /api/v1/path)
+                .requestMatchers(HttpMethod.GET,
+                    "/api/v1/products/**", "/products/**",
+                    "/api/v1/categories/**", "/categories/**",
+                    "/api/v1/training/**", "/training/**",
+                    "/api/v1/reviews/**", "/reviews/**",
+                    "/api/v1/faqs/**", "/faqs/**",
+                    "/api/v1/education/**", "/education/**",
+                    "/api/v1/media/**", "/media/**"
+                ).permitAll()
+
+                // Customer Auth & Guest Cart
+                .requestMatchers("/api/v1/auth/**", "/auth/**", "/api/v1/cart/guest/**", "/cart/guest/**").permitAll()
+
+                // Admin Auth & Isolated Admin Routes
+                .requestMatchers("/api/v1/admin/auth/**", "/admin/auth/**").permitAll()
+                .requestMatchers("/api/v1/admin/**", "/admin/**").hasAuthority("ROLE_ADMIN")
+
+                // Swagger & System Actuator Endpoints
                 .requestMatchers(
-                    "/api/v1/auth/**",
-                    "/api/v1/reviews/**",
-                    "/api/v1/faqs/**",
-                    "/api/v1/catalog/**",
-                    "/api/v1/education/**",
-                    "/api/v1/media/**",
-                    "/api/v1/training/**",
                     "/actuator/**",
                     "/h2-console/**",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html"
                 ).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/products/**", "/api/v1/categories/**").permitAll()
-                .anyRequest().permitAll()
-            );
+
+                // Any other request requires authentication
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(traceIdFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

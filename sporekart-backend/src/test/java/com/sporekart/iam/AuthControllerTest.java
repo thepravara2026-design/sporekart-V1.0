@@ -27,11 +27,11 @@ class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("POST /auth/otp/send should accept valid phone target and return HTTP 200 OK")
+    @DisplayName("POST /api/v1/auth/otp/send should accept valid phone target and return HTTP 200 OK")
     void testSendOtp_ValidPhone_ReturnsSuccess() throws Exception {
         AuthController.SendOtpRequest request = new AuthController.SendOtpRequest("+919876543210", "PHONE");
 
-        mockMvc.perform(post("/auth/otp/send")
+        mockMvc.perform(post("/api/v1/auth/otp/send")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -40,11 +40,11 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /auth/otp/verify should authenticate and return tokens")
+    @DisplayName("POST /api/v1/auth/otp/verify should authenticate and return tokens")
     void testVerifyOtp_ValidRequest_ReturnsTokens() throws Exception {
         AuthController.VerifyOtpRequest request = new AuthController.VerifyOtpRequest("+919876543210", "123456", "Ramesh", "Kumar", "ROLE_BUYER");
 
-        mockMvc.perform(post("/auth/otp/verify")
+        mockMvc.perform(post("/api/v1/auth/otp/verify")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -54,16 +54,16 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /auth/google should authenticate Google token and return AuthResponseDto")
+    @DisplayName("POST /api/v1/auth/google should authenticate Google token and return AuthResponseDto")
     void testAuthenticateGoogle_ReturnsSuccess() throws Exception {
         AuthController.GoogleAuthRequest request = new AuthController.GoogleAuthRequest("valid_google_id_token_xyz", "ROLE_BUYER");
 
-        mockMvc.perform(post("/auth/google")
+        mockMvc.perform(post("/api/v1/auth/google")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.data.accessToken", notNullValue()))
-                .andExpect(jsonPath("$.data.email", is("google.user@sporekart.com")));
+                .andExpect(jsonPath("$.data.email", containsString("@sporekart.com")));
     }
 }

@@ -1,9 +1,12 @@
 package com.sporekart.iam.internal.domain;
 
+import com.sporekart.iam.UserRole;
 import com.sporekart.iam.internal.listener.ImmutableIdentityEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -31,9 +34,12 @@ public class UserEntity {
     @Column(name = "last_name", nullable = false, updatable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    @Builder.Default
+    private Set<UserRole> roles = new HashSet<>();
 
     @Column(name = "auth_provider", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -51,10 +57,11 @@ public class UserEntity {
     @Builder.Default
     private ZonedDateTime updatedAt = ZonedDateTime.now();
 
-    public enum UserRole {
-        ROLE_ADMIN,
-        ROLE_BUYER,
-        ROLE_TRAINEE
+    public void addRole(UserRole role) {
+        if (this.roles == null) {
+            this.roles = new HashSet<>();
+        }
+        this.roles.add(role);
     }
 
     public enum AuthProvider {

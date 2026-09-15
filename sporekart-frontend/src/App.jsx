@@ -23,17 +23,28 @@ import Button from './components/ui/Button';
 import Badge from './components/ui/Badge';
 import MediaUploader from './components/ui/MediaUploader';
 import { landingService } from './services/landingService';
+import { useAuthStore } from './store/authStore';
+import { useCartStore } from './store/cartStore';
 import { User, Lock, FileText, Trash2 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('catalog'); // catalog | training | profile
-  const [user, setUser] = useState(null); // null = Guest, object = Authenticated User
-  const [cartItems, setCartItems] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authTriggerSource, setAuthTriggerSource] = useState('');
 
-  // Dynamic Data from Backend API with Clean Initial Fallbacks
+  // Zustand Store Hooks
+  const user = useAuthStore((state) => state.user);
+  const roles = useAuthStore((state) => state.roles);
+  const logout = useAuthStore((state) => state.logout);
+
+  const cartItems = useCartStore((state) => state.cartItems);
+  const isCartOpen = useCartStore((state) => state.isCartOpen);
+  const setCartOpen = useCartStore((state) => state.setCartOpen);
+  const addToCart = useCartStore((state) => state.addToCart);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeItem = useCartStore((state) => state.removeItem);
+
+  // Dynamic Data from Backend API
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([
     {
@@ -135,20 +146,8 @@ export default function App() {
     loadBackendData();
   }, []);
 
-  // Cart & Checkout Handlers
-  const handleAddToCart = (product) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-    setIsCartOpen(true);
-  };
-
   const handleBuyNow = (product) => {
-    handleAddToCart(product);
+    addToCart(product);
     if (!user) {
       setAuthTriggerSource(`Checkout: ${product.title}`);
       setIsAuthModalOpen(true);
@@ -160,7 +159,7 @@ export default function App() {
       setAuthTriggerSource(`Enrollment: ${batch.title}`);
       setIsAuthModalOpen(true);
     } else {
-      alert(`Successfully registered for ${batch.title}! Payment details dispatched.`);
+      alert(`Successfully registered for ${batch.title}! Trainee role granted & details dispatched.`);
     }
   };
 
@@ -183,9 +182,9 @@ export default function App() {
         onTabChange={setActiveTab}
         cartCount={cartItems.reduce((a, b) => a + b.quantity, 0)}
         user={user}
-        onLogout={() => setUser(null)}
+        onLogout={logout}
         onOpenAuthModal={() => { setAuthTriggerSource('Sign In Button'); setIsAuthModalOpen(true); }}
-        onToggleCart={() => setIsCartOpen(!isCartOpen)}
+        onToggleCart={() => setCartOpen(!isCartOpen)}
       />
 
       <main className="flex-1">
@@ -206,13 +205,13 @@ export default function App() {
             {/* 05. PRODUCT CATEGORIES */}
             <CategorySection
               categories={categories}
-              onSelectCategory={(catName) => scrollToSection('featured-products')}
+              onSelectCategory={() => scrollToSection('featured-products')}
             />
 
             {/* 06. FEATURED PRODUCTS */}
             <FeaturedProducts
               products={products}
-              onAddToCart={handleAddToCart}
+              onAddToCart={addToCart}
               onBuyNow={handleBuyNow}
             />
 
@@ -271,36 +270,42 @@ export default function App() {
               </h2>
             </div>
 
-            <div className="card-base p-6 border-[#173B2A]/30 bg-white">
-              <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-[#E1E5DA]">
-                <div className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-[#1F4D35]" />
-                  <h3 className="font-bold text-lg text-[#172019]">Immutable User Identity</h3>
+            {user && (
+              <div className="card-base p-6 border-[#173B2A]/30 bg-white">
+                <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-[#E1E5DA]">
+                  <div className="flex items-center gap-2">
+                    <User className="w-5 h-5 text-[#1F4D35]" />
+                    <h3 className="font-bold text-lg text-[#172019]">Immutable User Identity</h3>
+                  </div>
+                  <Badge variant="warning">
+                    <Lock className="w-3.5 h-3.5 inline" /> Locked Attribute Guard
+                  </Badge>
                 </div>
-                <Badge variant="warning">
-                  <Lock className="w-3.5 h-3.5 inline" /> Locked Attribute Guard
-                </Badge>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-[#FCFCF8] p-4 rounded-[12px] border border-[#E1E5DA]">
-                <div>
-                  <span className="text-xs text-[#7C857D] block">First & Last Name</span>
-                  <p className="font-semibold text-[#172019]">{user.firstName} {user.lastName}</p>
-                </div>
-                <div>
-                  <span className="text-xs text-[#7C857D] block">Assigned Role</span>
-                  <p className="font-semibold text-[#1F4D35]">{user.role}</p>
-                </div>
-                <div>
-                  <span className="text-xs text-[#7C857D] block">Mobile Phone</span>
-                  <p className="font-semibold text-[#172019]">{user.phoneNumber}</p>
-                </div>
-                <div>
-                  <span className="text-xs text-[#7C857D] block">Email ID</span>
-                  <p className="font-semibold text-[#172019]">{user.email}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-[#FCFCF8] p-4 rounded-[12px] border border-[#E1E5DA]">
+                  <div>
+                    <span className="text-xs text-[#7C857D] block">First & Last Name</span>
+                    <p className="font-semibold text-[#172019]">{user.firstName} {user.lastName}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-[#7C857D] block">Assigned Roles</span>
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      {roles.map((r) => (
+                        <Badge key={r} variant="brand">{r}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-xs text-[#7C857D] block">Mobile Phone</span>
+                    <p className="font-semibold text-[#172019]">{user.phoneNumber}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-[#7C857D] block">Email ID</span>
+                    <p className="font-semibold text-[#172019]">{user.email}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Supabase Media Storage Uploader Card */}
             <div className="card-base p-6 bg-white">
@@ -348,7 +353,7 @@ export default function App() {
                 size="sm"
                 onClick={() => {
                   if (confirm("Are you sure you want to permanently delete your SporeKart account?")) {
-                    setUser(null);
+                    logout();
                     setActiveTab('catalog');
                     alert("Account permanently deleted.");
                   }
@@ -367,16 +372,12 @@ export default function App() {
       {/* Slide-over Cart Drawer */}
       <CartDrawer
         isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
+        onClose={() => setCartOpen(false)}
         cartItems={cartItems}
-        onUpdateQuantity={(id, qty) => {
-          setCartItems((prev) => prev.map((item) => item.id === id ? { ...item, quantity: qty } : item));
-        }}
-        onRemoveItem={(id) => {
-          setCartItems((prev) => prev.filter((item) => item.id !== id));
-        }}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeItem}
         onProceedToCheckout={() => {
-          setIsCartOpen(false);
+          setCartOpen(false);
           if (!user) {
             setAuthTriggerSource('Checkout Cart Summary');
             setIsAuthModalOpen(true);
@@ -391,9 +392,6 @@ export default function App() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         triggerSource={authTriggerSource}
-        onSuccessLogin={(loggedInUser) => {
-          setUser(loggedInUser);
-        }}
       />
     </div>
   );
