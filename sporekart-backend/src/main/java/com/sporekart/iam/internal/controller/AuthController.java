@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping({"/api/v1/buyer/auth", "/api/v1/trainee/auth", "/api/v1/auth"})
 @RequiredArgsConstructor
 @Tag(name = "Authentication & IAM", description = "Passwordless Auth (Google OAuth, Phone/Email OTP) & Account Management")
 public class AuthController {
@@ -52,7 +52,8 @@ public class AuthController {
 
         // Determine requested role (Strictly restrict to BUYER or TRAINEE, default to BUYER)
         UserRole targetRole = UserRole.BUYER;
-        if (request.role() != null && request.role().toUpperCase().contains("TRAINEE")) {
+        String uri = servletRequest.getRequestURI();
+        if (uri.contains("/trainee/") || (request.role() != null && request.role().toUpperCase().contains("TRAINEE"))) {
             targetRole = UserRole.TRAINEE;
         }
 
@@ -79,7 +80,8 @@ public class AuthController {
     @Operation(summary = "Authenticate using Google OAuth 2.0 Token")
     public ResponseEntity<ApiResponse<AuthResponseDto>> authenticateGoogle(@Valid @RequestBody GoogleAuthRequest request, HttpServletRequest servletRequest) {
         UserRole targetRole = UserRole.BUYER;
-        if (request.role() != null && request.role().toUpperCase().contains("TRAINEE")) {
+        String uri = servletRequest.getRequestURI();
+        if (uri.contains("/trainee/") || (request.role() != null && request.role().toUpperCase().contains("TRAINEE"))) {
             targetRole = UserRole.TRAINEE;
         }
 

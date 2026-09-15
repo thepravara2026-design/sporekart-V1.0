@@ -39,19 +39,33 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler)
             )
             .authorizeHttpRequests(auth -> auth
-                // Public Reads (both legacy /path and /api/v1/path)
+                // Public Reads (Buyer catalog, Trainee training, FAQs, Reviews, Media)
                 .requestMatchers(HttpMethod.GET,
-                    "/api/v1/products/**", "/products/**",
-                    "/api/v1/categories/**", "/categories/**",
-                    "/api/v1/training/**", "/training/**",
+                    "/api/v1/buyer/products/**", "/api/v1/products/**", "/products/**",
+                    "/api/v1/buyer/categories/**", "/api/v1/categories/**", "/categories/**",
+                    "/api/v1/trainee/training/**", "/api/v1/training/**", "/training/**",
                     "/api/v1/reviews/**", "/reviews/**",
                     "/api/v1/faqs/**", "/faqs/**",
                     "/api/v1/education/**", "/education/**",
                     "/api/v1/media/**", "/media/**"
                 ).permitAll()
 
-                // Customer Auth & Guest Cart
-                .requestMatchers("/api/v1/auth/**", "/auth/**", "/api/v1/cart/guest/**", "/cart/guest/**").permitAll()
+                // Customer Auth (Buyer & Trainee Auth) & Guest Cart
+                .requestMatchers(
+                    "/api/v1/buyer/auth/**",
+                    "/api/v1/trainee/auth/**",
+                    "/api/v1/auth/**",
+                    "/auth/**",
+                    "/api/v1/buyer/cart/guest/**",
+                    "/api/v1/cart/guest/**",
+                    "/cart/guest/**"
+                ).permitAll()
+
+                // Trainee Course Access
+                .requestMatchers("/api/v1/trainee/**").hasAuthority("ROLE_TRAINEE")
+
+                // Buyer Access (Accessible by both ROLE_BUYER and ROLE_TRAINEE so trainees can buy products)
+                .requestMatchers("/api/v1/buyer/**", "/api/v1/cart/**", "/api/v1/orders/**").hasAnyAuthority("ROLE_BUYER", "ROLE_TRAINEE")
 
                 // Admin Auth & Isolated Admin Routes
                 .requestMatchers("/api/v1/admin/auth/**", "/admin/auth/**").permitAll()

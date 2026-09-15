@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/cart/guest")
+@RequestMapping({"/api/v1/buyer/cart/guest", "/api/v1/cart/guest"})
 @RequiredArgsConstructor
 @Tag(name = "Guest Cart Module", description = "Anonymous guest cart persistence & auth merge endpoints")
 public class GuestCartController {

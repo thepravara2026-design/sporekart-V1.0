@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping({"/api/v1/buyer/categories", "/api/v1/categories", "/categories"})
 @Tag(name = "Category Catalog", description = "Product Categories API for SporeKart Landing Page")
 public class CategoryController {
 

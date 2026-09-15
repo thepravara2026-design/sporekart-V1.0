@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping({"/api/v1/buyer/products", "/api/v1/products", "/products"})
 @Tag(name = "Product Catalog API", description = "Featured & Categorized Product Search API")
 public class ProductController {
 

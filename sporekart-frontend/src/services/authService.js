@@ -2,14 +2,16 @@ import apiClient from './apiClient';
 
 export const authService = {
   // Dispatches 6-digit OTP code to Phone SMS or Email
-  async sendOtp(target, type = 'PHONE') {
-    const res = await apiClient.post('/auth/otp/send', { target, type });
+  async sendOtp(target, type = 'PHONE', role = 'ROLE_BUYER') {
+    const endpoint = role === 'ROLE_TRAINEE' ? '/api/v1/trainee/auth/otp/send' : '/api/v1/buyer/auth/otp/send';
+    const res = await apiClient.post(endpoint, { target, type });
     return res.data;
   },
 
   // Verifies OTP and receives JWT Access Token
-  async verifyOtp(target, otpCode, firstName, lastName, role) {
-    const res = await apiClient.post('/auth/otp/verify', {
+  async verifyOtp(target, otpCode, firstName, lastName, role = 'ROLE_BUYER') {
+    const endpoint = role === 'ROLE_TRAINEE' ? '/api/v1/trainee/auth/otp/verify' : '/api/v1/buyer/auth/otp/verify';
+    const res = await apiClient.post(endpoint, {
       target,
       otpCode,
       firstName,
@@ -23,8 +25,9 @@ export const authService = {
   },
 
   // Google OAuth 2.0 Token Exchange
-  async googleAuth(googleIdToken, role) {
-    const res = await apiClient.post('/auth/google', { googleIdToken, role });
+  async googleAuth(googleIdToken, role = 'ROLE_BUYER') {
+    const endpoint = role === 'ROLE_TRAINEE' ? '/api/v1/trainee/auth/google' : '/api/v1/buyer/auth/google';
+    const res = await apiClient.post(endpoint, { googleIdToken, role });
     if (res.data && res.data.data && res.data.data.accessToken) {
       localStorage.setItem('sporekart_access_token', res.data.data.accessToken);
     }
